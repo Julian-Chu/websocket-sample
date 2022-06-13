@@ -87,6 +87,7 @@ func (s Websocket) Send() {
 
 			}
 			fmt.Printf("%+v\n", m["a"])
+
 		}
 	}
 }
