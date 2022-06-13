@@ -27,7 +27,7 @@ func newWebSocket() *Websocket {
 func (s Websocket) Send() {
 	defer s.conn.Close()
 	var init_resp map[string]interface{}
-	// get connection status
+	// get connection status after connection
 	err := s.conn.ReadJSON(&init_resp)
 	if err != nil {
 		log.Fatal(err)
@@ -36,9 +36,11 @@ func (s Websocket) Send() {
 		log.Fatal(init_resp)
 	}
 
-	// do subscription to pair
+	// create subscription to pair
 	payload := fmt.Sprintf(`{"event": "subscribe", "pair": ["XBT/USD","XBT/EUR"], "subscription": {"name": "ticker"}}`)
+	// send request with payload
 	s.conn.WriteMessage(1, []byte(payload))
+	// read response after sending request
 	err = s.conn.ReadJSON(&init_resp)
 	if err != nil {
 		log.Fatal(err)
@@ -46,7 +48,6 @@ func (s Websocket) Send() {
 		log.Fatal(init_resp)
 	}
 
-	// listen to pair subscription
 	resp := map[string]interface{}{}
 	msg := []byte{}
 	heartbeatResponse := []byte{123, 34, 101, 118, 101, 110, 116, 34, 58, 34, 104, 101, 97, 114, 116, 98, 101, 97, 116, 34, 125} // equals to {"event":"heartbeat"}
@@ -69,7 +70,8 @@ func (s Websocket) Send() {
 
 	// array not standard json
 	resp1 := []interface{}{}
-	// handle ticker message
+
+	// listen to pairs subscription,
 	for {
 		_, msg, err = s.conn.ReadMessage()
 		if err != nil {
@@ -80,6 +82,7 @@ func (s Websocket) Send() {
 			if err != nil {
 				log.Fatal(err)
 			}
+			// start to  handle ticker message
 			fmt.Printf("%+v\n", resp1)
 			fmt.Printf("%+v\n", resp1[0])
 			m, ok := resp1[1].(map[string]interface{})
