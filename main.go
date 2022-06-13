@@ -67,6 +67,7 @@ func (s Websocket) Send() {
 		}
 	}
 
+	// array not standard json
 	resp1 := []interface{}{}
 	// handle ticker message
 	for {
@@ -80,6 +81,12 @@ func (s Websocket) Send() {
 				log.Fatal(err)
 			}
 			fmt.Printf("%+v\n", resp1)
+			fmt.Printf("%+v\n", resp1[0])
+			m, ok := resp1[1].(map[string]interface{})
+			if !ok {
+
+			}
+			fmt.Printf("%+v\n", m["a"])
 		}
 	}
 }
